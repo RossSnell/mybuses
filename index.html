@@ -119,7 +119,7 @@ console.log("Subscribed");;
 const vehicles = {};
 
 client.on('message', (topic, message) => {
-
+console.log(topic);
     try {
 
         const vp = JSON.parse(message.toString()).VP;
