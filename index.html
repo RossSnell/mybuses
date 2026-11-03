@@ -119,61 +119,87 @@ console.log(topic);
         const lat = vp.lat;
         const lon = vp.long;
         const vehicleId = vp.veh;
-        const vehicleKey = route + "-" + vehicleId;
 
-        const routeNames = {
-        "1056": "56",
-       "1069": "69",
-        "1506": "506"
-};
-
-const displayRoute = routeNames[route] || route;
         if (!lat || !lon) return;
 
         const isTram = ['1','2','3','10'].includes(route);
 
         const color = isTram ? '#00965E' : '#007AC9';
 
-        const heading = vp.hdg || 0;
+        if (vehicles[vehicleId]) {
 
+    vehicles[vehicleId].setLatLng([lat, lon]);
 
-
-const icon = L.divIcon({
-    className: '',
-    html: `
-        <div style="
-            transform: rotate(${heading}deg);
-            color:black;
-            font-size:24px;
-            font-weight:bold;
-        ">
-            ▲
-        </div>
-    `,
-    iconSize: [24, 24],
-    iconAnchor: [12, 12]
-});
-
-if (vehicles[vehicleKey]) {
-
-    vehicles[vehicleKey].setLatLng([lat, lon]);
-    vehicles[vehicleKey].setIcon(icon);
+    vehicles[vehicleId].setIcon(
+        L.divIcon({
+            className: '',
+            html: `
+                <div style="text-align:center;">
+                    <div style="
+                        transform: rotate(${vp.hdg || 0}deg);
+                        color:black;
+                        font-size:24px;
+                        font-weight:bold;
+                        text-shadow: 0 0 3px white;
+                        line-height:18px;
+                    ">
+                        ▲
+                    </div>
+                    <div style="
+                        color:${color};
+                        font-size:12px;
+                        font-weight:bold;
+                    ">
+                        ${route}
+                    </div>
+                </div>
+            `,
+            iconSize: [30,30],
+            iconAnchor: [15,15]
+        })
+    );
 
 } else {
 
-    const marker = L.marker(
-        [lat, lon],
-        { icon }
-    ).addTo(map);
+const heading = vp.hdg || 0;
 
-    marker.bindPopup(
-        `<b>${displayRoute}</b><br>
-        Vehicle ${vehicleId}`
-    );
+const marker = L.marker([lat, lon], {
+    icon: L.divIcon({
+        className: '',
+        html: `
+            <div style="text-align:center;">
+                <div style="
+                    transform: rotate(${heading}deg);
+                    color:black;
+                    font-size:24px;
+                    font-weight:bold;
+                    text-shadow: 0 0 3px white;
+                    line-height:18px;
+                ">
+                    ▲
+                </div>
+                <div style="
+                    color:${color};
+                    font-size:12px;
+                    font-weight:bold;
+                    text-shadow: 0 0 2px white;
+                ">
+                    ${route}
+                </div>
+            </div>
+        `,
+        iconSize: [30,30],
+        iconAnchor: [15,15]
+    })
+}).addTo(map);
 
-    vehicles[vehicleKey] = marker;
-}
-        
+            marker.bindPopup(
+                `<b>${route}</b><br>
+                Vehicle ${vehicleId}`
+            );
+
+            vehicles[vehicleId] = marker;
+        }
 
     } catch (err) {
         console.error(err);
