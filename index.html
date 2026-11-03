@@ -99,7 +99,9 @@ client.on('connect', () => {
     console.log('Connected to HSL');
 
     // Subscribe to all vehicle updates
-client.subscribe('/hfp/v2/journey/+/vp/#');
+client.subscribe('/hfp/v2/journey/+/vp/+/+/+/1056/+/+/+/+/+/#');
+client.subscribe('/hfp/v2/journey/+/vp/+/+/+/1069/+/+/+/+/+/#');
+client.subscribe('/hfp/v2/journey/+/vp/+/+/+/1506/+/+/+/+/+/#');
 
 console.log("Subscribed");;
 
