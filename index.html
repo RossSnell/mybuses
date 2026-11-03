@@ -133,15 +133,28 @@ console.log(topic);
 
         } else {
 
-            const marker = L.circleMarker(
-                [lat, lon],
-                {
-                    radius: 10,
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.8
-                }
-            ).addTo(map);
+            const heading = vp.hdg || 0;
+
+const icon = L.divIcon({
+    className: '',
+    html: `
+        <div style="
+            transform: rotate(${heading}deg);
+            color:${color};
+            font-size:24px;
+            font-weight:bold;
+        ">
+            ▲
+        </div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+});
+
+const marker = L.marker(
+    [lat, lon],
+    { icon }
+).addTo(map);
 
             marker.bindTooltip(
                 route,
