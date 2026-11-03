@@ -154,25 +154,25 @@ const icon = L.divIcon({
     iconAnchor: [12, 12]
 });
 
-const marker = L.marker(
-    [lat, lon],
-    { icon }
-).addTo(map);
+if (vehicles[vehicleKey]) {
 
-            marker.bindTooltip(
-                route,
-                {
-                    permanent: true,
-                    direction: 'center'
-                }
-            );
+    vehicles[vehicleKey].setLatLng([lat, lon]);
+    vehicles[vehicleKey].setIcon(icon);
 
-            marker.bindPopup(
-                `<b>${route}</b><br>
-                Vehicle ${vehicleId}`
-            );
+} else {
 
-            vehicles[vehicleId] = marker;
+    const marker = L.marker(
+        [lat, lon],
+        { icon }
+    ).addTo(map);
+
+    marker.bindPopup(
+        `<b>${displayRoute}</b><br>
+        Vehicle ${vehicleId}`
+    );
+
+    vehicles[vehicleKey] = marker;
+}
         
 
     } catch (err) {
