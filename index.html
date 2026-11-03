@@ -116,8 +116,6 @@ console.log("Subscribed");;
 
 });
 
-const vehicles = {};
-
 client.on('message', (topic, message) => {
 console.log(topic);
     try {
@@ -174,7 +172,6 @@ console.log(topic);
         console.error(err);
     }
 
-});
 });
 
 </script>
