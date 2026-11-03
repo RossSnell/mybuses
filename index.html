@@ -77,19 +77,103 @@ L.marker([60.213, 24.949])
  .addTo(map)
  .bindPopup("Käpylä");
 
-</script>
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
 <script>
+
+// Routes we care about
+const wantedRoutes = [
+    "56",
+    "69",
+    "506",
+    "1",
+    "2",
+    "3",
+    "10"
+];
+
+// Store markers by vehicle ID
+const vehicles = {};
+
+// Connect
 const client = mqtt.connect('wss://mqtt.hsl.fi:443');
 
 client.on('connect', () => {
-    alert('Connected to MQTT!');
+
+    console.log('Connected to HSL');
+
+    // Subscribe to all vehicle updates
+    client.subscribe('/hfp/v2/journey/ongoing/+/+/+/+/+/+/+/+/3/#');
+
 });
 
-client.on('error', (err) => {
-    alert('MQTT Error: ' + err);
+client.on('message', (topic, message) => {
+
+    try {
+
+        const msg = JSON.parse(message.toString());
+
+        if (!msg.VP) return;
+
+        const vp = msg.VP;
+
+        const route = vp.desi;
+
+        // Filter routes
+        if (!wantedRoutes.includes(route)) return;
+
+        const lat = vp.lat;
+        const lon = vp.long;
+
+        if (!lat || !lon) return;
+
+        // Unique vehicle ID
+        const vehicleId = vp.veh;
+
+        // Tram routes are 1,2,3,10
+        const isTram = ["1", "2", "3", "10"].includes(route);
+
+        const colour = isTram ? "#0078d4" : "#e74c3c";
+
+        // Marker already exists → move it
+        if (vehicles[vehicleId]) {
+
+            vehicles[vehicleId].setLatLng([lat, lon]);
+
+        } else {
+
+            // Create a labelled circle marker
+            const marker = L.circleMarker([lat, lon], {
+                radius: 10,
+                color: colour,
+                fillColor: colour,
+                fillOpacity: 0.8,
+                weight: 2
+            }).addTo(map);
+
+            marker.bindTooltip(
+                route,
+                {
+                    permanent: true,
+                    direction: 'center',
+                    className: 'route-label'
+                }
+            );
+
+            marker.bindPopup(`
+                <b>Route ${route}</b><br>
+                Vehicle ${vehicleId}
+            `);
+
+            vehicles[vehicleId] = marker;
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+
 });
+
 </script>
 </body>
 </html>
