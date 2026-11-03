@@ -45,7 +45,7 @@ html, body {
 <body>
 
 <div id="header">
-    <h2 style="margin:0">My Transport</h2>
+    <h2 style="margin:0">My Transport v2</h2>
 </div>
 
 <div id="filters">
@@ -81,7 +81,15 @@ L.marker([60.213, 24.949])
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
 <script>
-alert("MQTT type: " + typeof mqtt);
+const client = mqtt.connect('wss://mqtt.hsl.fi:443');
+
+client.on('connect', () => {
+    alert('Connected to MQTT!');
+});
+
+client.on('error', (err) => {
+    alert('MQTT Error: ' + err);
+});
 </script>
 </body>
 </html>
